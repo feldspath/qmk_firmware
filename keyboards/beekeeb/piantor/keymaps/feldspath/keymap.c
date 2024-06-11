@@ -17,9 +17,11 @@ enum CustomKeycodes {
     M_EG,
     M_EC,
     M_AG,
+    M_AC,
     M_UG,
     M_UC,
     M_OC,
+    M_IC,
     M_CC,
     M_APS,
     M_QTE,
@@ -59,10 +61,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       *                       └───┘   └───┘
       */
     [_ALPHA] = LAYOUT_split_3x6_3(
-        KC_ESC,  KC_A,         KC_Z,         KC_E,         KC_R,           KC_T,                               KC_Y,       KC_U,         KC_I,         KC_O,         KC_P,         KC_DEL,
-        KC_TAB,  LGUI_T(KC_Q), LALT_T(KC_S), LCTL_T(KC_D), LSFT_T(KC_F),   KC_G,                               KC_H,       RSFT_T(KC_J), RCTL_T(KC_K), RALT_T(KC_L), RGUI_T(KC_M), KC_ENT,
-        KC_NO,   KC_W,         LT(0, KC_X),  LT(0, KC_C),  LT(0, KC_V),    KC_B,                               KC_N,       KC_SCLN,      KC_COMM,      KC_DOT,       KC_SLSH,      KC_NO,
-                                                           MO(_LOWER),     KC_SPC,  KC_NO,             KC_NO,  MO(_RAISE), KC_BSPC
+        KC_ESC,  KC_A,         KC_Z,              KC_E,                 KC_R,                KC_T,                               KC_Y,       KC_U,         KC_I,         KC_O,         KC_P,         KC_DEL,
+        KC_TAB,  LGUI_T(KC_Q), LALT_T(KC_S),      LCTL_T(KC_D),         LSFT_T(KC_F),        KC_G,                               KC_H,       RSFT_T(KC_J), RCTL_T(KC_K), RALT_T(KC_L), RGUI_T(KC_M), KC_ENT,
+        KC_NO,   KC_W,         LT(_ALPHA, KC_X),  LT(_ALPHA, KC_C),     LT(_ALPHA, KC_V),    KC_B,                               KC_N,       KC_SCLN,      KC_COMM,      KC_DOT,       KC_SLSH,      KC_NO,
+                                                  MO(_LOWER),           KC_SPC,              KC_NO,                     KC_NO,   MO(_RAISE), KC_BSPC
     ),
 
     [_LOWER] = LAYOUT_split_3x6_3(
@@ -73,9 +75,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_RAISE] = LAYOUT_split_3x6_3(
-        _______,  M_AG,       _______,    _______,    _______,    _______,                               _______,    M_UG,       M_UC,    M_OC,       _______,    _______,
-        _______,  _______,    _______,    M_GRV,      M_EA,       M_APS,                                 _______,    KC_LEFT,    KC_DOWN,    KC_UP,      KC_RIGHT,   _______,
-        _______,  _______,    M_EC,       M_CC,       M_EG,       M_QTE,                                 _______,    _______,    _______,    _______,    _______,    _______,
+        _______,  M_AG,       _______,    _______,    _______,    _______,                               M_UC,       M_UG,                   M_IC,       M_OC,       _______,                _______,
+        _______,  KC_CAPS,    KC_BSLS,    M_GRV,      M_EA,       M_APS,                                 _______,    LT(_RAISE, KC_LEFT),    KC_DOWN,    KC_UP,      LT(_RAISE, KC_RIGHT),   _______,
+        _______,  _______,    M_EC,       M_CC,       M_EG,       M_QTE,                                 _______,    _______,                _______,    _______,    _______,                _______,
                                                       _______,    _______,   _______,          _______,  _______,    _______
     ),
 
@@ -89,87 +91,60 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 layer_state_t layer_state_set_user(layer_state_t state) { return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST); }
 
+
+#define MACRO_CHAR(MACRO, str)      case MACRO:                         \
+                                        if (record->event.pressed) {    \
+                                            SEND_STRING(str);           \
+                                        }                               \
+                                        break;                          \
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-    case LT(0,KC_X):
-          if (!record->tap.count && record->event.pressed) {
-              tap_code16(C(KC_X)); // Intercept hold function to send Ctrl-X
-              return false;
-          }
-          return true;             // Return true for normal processing of tap keycode
-    case LT(0,KC_C):
-          if (!record->tap.count && record->event.pressed) {
-              tap_code16(C(KC_C)); // Intercept hold function to send Ctrl-C
-              return false;
-          }
-          return true;             // Return true for normal processing of tap keycode
-    case LT(0,KC_V):
-          if (!record->tap.count && record->event.pressed) {
-              tap_code16(C(KC_V)); // Intercept hold function to send Ctrl-V
-              return false;
-          }
-          return true;
-    case M_EA:
-        if (record->event.pressed) {
-            SEND_STRING("'e");
+    case LT(_ALPHA, KC_X):
+        if (!record->tap.count && record->event.pressed) {
+            tap_code16(C(KC_X)); // Intercept hold function to send Ctrl-X
+            return false;
         }
         break;
-    case M_EG:
-        if (record->event.pressed) {
-            SEND_STRING("`e");
+    case LT(_ALPHA, KC_C):
+        if (!record->tap.count && record->event.pressed) {
+            tap_code16(C(KC_C)); // Intercept hold function to send Ctrl-C
+            return false;
         }
         break;
-    case M_EC:
-        if (record->event.pressed) {
-            SEND_STRING("^e");
+    case LT(_ALPHA, KC_V):
+        if (!record->tap.count && record->event.pressed) {
+            tap_code16(C(KC_V)); // Intercept hold function to send Ctrl-V
+            return false;
         }
         break;
-    case M_AG:
-        if (record->event.pressed) {
-            SEND_STRING("`a");
+    case LT(_RAISE, KC_LEFT):
+        if (!record->tap.count && record->event.pressed) {
+            tap_code(KC_HOME);
+            return false;
         }
         break;
-    case M_UG:
-        if (record->event.pressed) {
-            SEND_STRING("`u");
+    case LT(_RAISE, KC_RIGHT):
+        if (!record->tap.count && record->event.pressed) {
+            tap_code(KC_END);
+            return false;
         }
         break;
-    case M_UC:
-        if (record->event.pressed) {
-            SEND_STRING("^u");
-        }
-        break;
-    case M_OC:
-        if (record->event.pressed) {
-            SEND_STRING("^o");
-        }
-        break;
-    case M_CC:
-        if (record->event.pressed) {
-            SEND_STRING("'c");
-        }
-        break;
-    case M_APS:
-        if (record->event.pressed) {
-            SEND_STRING("' ");
-        }
-        break;
-    case M_QTE:
-        if (record->event.pressed) {
-          SEND_STRING(SS_LSFT("' "));
-        }
-        break;
-    case M_GRV:
-        if (record->event.pressed) {
-            SEND_STRING("` ");
-        }
-        break;
-    case M_HAT:
-        if (record->event.pressed) {
-            SEND_STRING("^ ");
-        }
-        break;
+    MACRO_CHAR(M_EA, "'e")
+    MACRO_CHAR(M_EG, "`e")
+    MACRO_CHAR(M_EC, "^e")
+    MACRO_CHAR(M_AG, "`a")
+    MACRO_CHAR(M_AC, "^a")
+    MACRO_CHAR(M_UG, "`u")
+    MACRO_CHAR(M_UC, "^u")
+    MACRO_CHAR(M_OC, "^o")
+    MACRO_CHAR(M_IC, "^i")
+    MACRO_CHAR(M_CC, "'c")
+    MACRO_CHAR(M_APS, "' ")
+    MACRO_CHAR(M_QTE, SS_LSFT("' "))
+    MACRO_CHAR(M_GRV, "` ")
+    MACRO_CHAR(M_HAT, "^ ")
     }
-    
     return true;
 };
