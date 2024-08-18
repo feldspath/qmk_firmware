@@ -3,8 +3,6 @@
 
 #include QMK_KEYBOARD_H
 
-#define RAISE
-
 enum Layer {
     _ALPHA = 0,
     _LOWER = 1,
@@ -29,6 +27,7 @@ enum CustomKeycodes {
     M_QTE,
     M_GRV,
     M_HAT,
+    M_TLD,
 };
 
 #define S_BNG S(KC_1)
@@ -40,7 +39,6 @@ enum CustomKeycodes {
 #define S_STR S(KC_8)
 #define S_LPR S(KC_9)
 #define S_RPR S(KC_0)
-#define S_TLD S(KC_GRV)
 #define S_PLS S(KC_EQL)
 #define S_PIP S(KC_BSLS)
 #define S_UDS S(KC_MINS)
@@ -72,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_LOWER] = LAYOUT_split_3x6_3(
         _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
         _______, S_DOL,   S_PLS,   S_LPR,   S_RPR,   S_AT,                               S_PIP,   KC_MINS, KC_EQL,  S_UDS,   S_STR,   _______,
-        _______, S_BNG,   S_HSH,   S_LCB,   S_RCB,   S_TLD,                              S_AMP,   KC_LBRC, KC_RBRC, S_PCT,   M_HAT,   _______,
+        _______, S_BNG,   S_HSH,   S_LCB,   S_RCB,   M_TLD,                              S_AMP,   KC_LBRC, KC_RBRC, S_PCT,   M_HAT,   _______,
                                             _______, _______, _______,         _______,  _______, _______
     ),
 
@@ -161,6 +159,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     MACRO_CHAR(M_QTE, SS_LSFT("' "))
     MACRO_CHAR(M_GRV, "` ")
     MACRO_CHAR(M_HAT, "^ ")
+    MACRO_CHAR(M_TLD, "~ ")
     }
     return true;
 };
