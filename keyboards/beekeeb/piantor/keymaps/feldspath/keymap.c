@@ -10,6 +10,10 @@ enum Layer {
     _ADJUST = 3,
     _GAME = 4,
     _GAMELOWER = 5,
+    _ERGOL = 6,
+    _DK = 7,
+    _NAV = 8,
+    _SYM = 9,
 };
 
 enum CustomKeycodes {
@@ -45,21 +49,19 @@ enum CustomKeycodes {
 #define S_LCB S(KC_LBRC)
 #define S_RCB S(KC_RBRC)
 
+const key_override_t Base_EKC_DK   = ko_make_with_layers(MOD_MASK_SHIFT, OSL(_DK), KC_EXLM, (1 << _ERGOL));
+const key_override_t Base_EKC_MNS  = ko_make_with_layers(MOD_MASK_SHIFT, KC_MINS, KC_QUES, (1 << _ERGOL));
+const key_override_t Base_EKC_DOT  = ko_make_with_layers(MOD_MASK_SHIFT, KC_DOT, KC_COLN, (1 << _ERGOL));
+const key_override_t Base_EKC_COMM = ko_make_with_layers(MOD_MASK_SHIFT, KC_COMM, KC_SCLN, (1 << _ERGOL));
+const key_override_t DK_EKC_D      = ko_make_with_layers(MOD_MASK_SHIFT, KC_UNDS, KC_UNDS, (1 << _DK));
+const key_override_t DK_EKC_L      = ko_make_with_layers(MOD_MASK_SHIFT, KC_LPRN, KC_LPRN, (1 << _DK));
+const key_override_t DK_EKC_R      = ko_make_with_layers(MOD_MASK_SHIFT, KC_RPRN, KC_RPRN, (1 << _DK));
+
+const key_override_t **key_overrides = (const key_override_t *[]){
+	&Base_EKC_DK, &Base_EKC_MNS, &Base_EKC_DOT, &Base_EKC_COMM, &DK_EKC_D, &DK_EKC_L, &DK_EKC_R, NULL,
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-     /*
-      * ┌───┬───┬───┬───┬───┬───┐       ┌───┬───┬───┬───┬───┬───┐
-      * │Tab│ Q │ W │ E │ R │ T │       │ Y │ U │ I │ O │ P │Bsp│
-      * ├───┼───┼───┼───┼───┼───┤       ├───┼───┼───┼───┼───┼───┤
-      * │Ctl│ A │ S │ D │ F │ G │       │ H │ J │ K │ L │ ; │ ' │
-      * ├───┼───┼───┼───┼───┼───┤       ├───┼───┼───┼───┼───┼───┤
-      * │Sft│ Z │ X │ C │ V │ B │       │ N │ M │ , │ . │ / │Sft│
-      * └───┴───┴───┴───┴───┴───┘       └───┴───┴───┴───┴───┴───┘
-      *               ┌───┐                   ┌───┐
-      *               │GUI├───┐           ┌───┤Alt│
-      *               └───┤Bsp├───┐   ┌───┤Ent├───┘
-      *                   └───┤   │   │   ├───┘
-      *                       └───┘   └───┘
-      */
     [_ALPHA] = LAYOUT_split_3x6_3(
         KC_ESC,  KC_A,         KC_Z,              KC_E,                 KC_R,                KC_T,                               KC_Y,       KC_U,         KC_I,         KC_O,         KC_P,         KC_DEL,
         KC_TAB,  LGUI_T(KC_Q), LALT_T(KC_S),      LCTL_T(KC_D),         LSFT_T(KC_F),        KC_G,                               KC_H,       RSFT_T(KC_J), RCTL_T(KC_K), RALT_T(KC_L), RGUI_T(KC_M), KC_ENT,
@@ -83,16 +85,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_ADJUST] = LAYOUT_split_3x6_3(
         _______, KC_F1,    KC_F2,     KC_F3,       KC_F4,      KC_F5,                         KC_F6,            KC_F7,      KC_F8,      KC_F9,      KC_F10,    _______,
-        _______, KC_F11,   _______,   DF(_GAME),   _______,    _______,                       QK_BOOTLOADER,    _______,    _______,    _______,    KC_F12,    _______,
+        _______, KC_F11,   _______,   DF(_GAME),   DF(_ERGOL), _______,                       QK_BOOTLOADER,    _______,    _______,    _______,    KC_F12,    _______,
         _______, _______,  _______,   _______,     _______,    _______,                       _______,          _______,    _______,    _______,    _______,   _______,
                                                    _______,    _______,  _______,             _______,          _______,    _______
     ),
 
-    [_GAME] = LAYOUT_split_3x6_3( 
+    [_GAME] = LAYOUT_split_3x6_3(
         KC_ESC,  KC_Q,   KC_W,    KC_E,    KC_R,       KC_T,                               KC_Y,       KC_U,         KC_I,         KC_O,         KC_P,         KC_DEL,
         KC_TAB,  KC_A,   KC_S,    KC_D,    KC_F,       KC_G,                               KC_H,       KC_J,         KC_K,         KC_L,         KC_M,         KC_ENT,
         KC_LCTL, KC_Z,   KC_X,    KC_C,    KC_V,       KC_B,                               KC_N,       KC_SCLN,      KC_COMM,      KC_DOT,       KC_SLSH,      DF(_ALPHA),
-                                           MO(_GAMELOWER), KC_SPC, KC_EQL,          _______,   _______,    _______
+                                           MO(_GAMELOWER), KC_SPC, KC_LSFT,          _______,   _______,    _______
     ),
 
     [_GAMELOWER] = LAYOUT_split_3x6_3(
@@ -100,6 +102,34 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______,   _______,   _______,   _______,   _______,                    _______, _______, _______, _______, _______, _______,
         _______, _______,   _______,   _______,   _______,   _______,                    _______, _______, _______, _______, _______, _______,
                                                   _______,   _______, _______, _______,  _______, _______
+    ),
+
+    [_ERGOL] = LAYOUT_split_3x6_3(
+        KC_ESC,     KC_Q,           KC_C,           KC_O,           KC_P,           KC_W,                               KC_J,       KC_M,           KC_D,           OSL(_DK),       KC_Y,           KC_DEL,
+        KC_TAB,     LGUI_T(KC_A),   LALT_T(KC_S),   LCTL_T(KC_E),   LSFT_T(KC_N),   KC_F,                               KC_L,       RSFT_T(KC_R),   RCTL_T(KC_T),   RALT_T(KC_I),   LGUI_T(KC_U),   KC_ENT,
+        KC_NO,      KC_Z,           KC_X,           KC_MINS,        KC_V,           KC_B,                               KC_DOT,     KC_H,           KC_G,           KC_COMM,        KC_K,           DF(_ALPHA),
+                                                                    LSFT_T(KC_ESC), LT(_NAV, KC_SPC), KC_NO,    KC_NO,  LT(_NAV, KC_BSPC), LT(_SYM, KC_ENT)
+    ),
+
+    [_DK] = LAYOUT_split_3x6_3(
+        _______, M_AC,    M_CC,     _______,  M_OC,     _______,                                     _______,   _______, KC_UNDS,   KC_DQT,   M_UC,    _______,
+        _______, M_AG,    M_EA,     M_EG,     M_EC,     _______,                                     KC_LPRN,   KC_RPRN, M_IC,      _______,  M_UG,    _______,
+        _______, _______, _______,  _______,  _______,  _______,                                     _______,   _______, _______,   _______,  KC_DOT,  _______,
+                                              _______, _______, _______,        _______, _______, _______
+    ),
+    
+    [_NAV] = LAYOUT_split_3x6_3(
+        _______, KC_TAB,    KC_HOME,   KC_UP,   KC_END,    KC_PGUP,                      KC_SLSH,   KC_7,  KC_8,  KC_9,   KC_NO,    _______,
+        _______, KC_CAPS,   KC_LEFT,   KC_DOWN, KC_RIGHT,  KC_PGDN,                      KC_MINS,   KC_4,  KC_5,  KC_6,   KC_0,     _______,
+        _______, KC_NO,     KC_VOLD,   KC_MPLY, KC_VOLU,   S(KC_TAB),                    KC_COMM,   KC_1,  KC_2,  KC_3,   KC_DOT,   _______,
+                                                _______,   _______, _______,   _______,  _______, _______
+    ),
+
+    [_SYM] = LAYOUT_split_3x6_3(
+        _______,  M_HAT,    KC_LABK,    KC_RABK,    KC_DLR,     KC_PERC,                               KC_AT,      KC_AMPR,     KC_ASTR,    M_APS,      M_GRV,    _______,
+        _______,  KC_LCBR,  KC_LPRN,    KC_RPRN,    KC_RCBR,    KC_EQL,                                KC_BSLS,    KC_PLUS,     KC_MINS,    KC_SLSH,    M_QTE,    _______,
+        _______,  M_TLD,    KC_LBRC,    KC_RBRC,    KC_UNDS,    KC_HASH,                               KC_PIPE,    KC_EXLM,     KC_SCLN,    KC_COLON,   KC_QUES,  _______,
+                                                    _______,    _______,   _______,          _______,  _______,    _______
     ),
 };
 
@@ -163,3 +193,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 };
+
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LSFT_T(KC_ESC):
+        case LT(_SYM, KC_ENT):
+            // Immediately select the hold action when another key is tapped.
+            return true;
+        default:
+            // Do not select the hold action when another key is tapped.
+            return false;
+    }
+}
